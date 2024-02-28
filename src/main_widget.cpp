@@ -44,9 +44,16 @@ void MainWidget::ReadKeyText() {
     for (int i = 0; i < key_list.size(); ++i) {
       QString key_str = key_list.at(i);
       KeyItem* item = new KeyItem(50 * i, row * 50, key_str);
+      connect(item, &KeyItem::Clicked, this, &MainWidget::GetItemClickedString);
       item->setPos(50 * i + 25, row * 50 + 25);
+
       m_scene->addItem(item);
     }
     row++;
   }
+}
+
+void MainWidget::GetItemClickedString(const QString& str) {
+  QString s = str;
+  int a = 0;
 }

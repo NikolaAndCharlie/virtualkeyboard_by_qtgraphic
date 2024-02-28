@@ -13,4 +13,6 @@ class MainWidget : public QWidget {
   void ReadKeyText();
   View* m_view;
   QGraphicsScene* m_scene;
+ private slots:
+  void GetItemClickedString(const QString&);
 };

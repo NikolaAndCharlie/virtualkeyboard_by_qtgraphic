@@ -11,7 +11,7 @@ KeyItem::KeyItem(const int x, const int y, const QString& str)
   this->setX(x);
   this->setY(y);
   m_color.setRgb(156, 229, 134);
-  setFlags(ItemIsSelectable);
+  setFlags(ItemIsSelectable | ItemIsMovable);
   setAcceptHoverEvents(true);
 }
 
@@ -38,6 +38,11 @@ QPainterPath KeyItem::shape() const {
 void KeyItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
                     QWidget* widget) {
   QColor fill_color = m_color;
+  if (option->state & QStyle::State_Selected) {
+  //  fill_color = m_color.lighter(150);
+  } else if (option->state & QStyle::State_MouseOver) {
+    fill_color = m_color.darker(150);
+  }
   if (m_str == "Enter") {
     painter->fillRect(QRectF(0, 0, width - 5, height * 2 - 5), fill_color);
   } else {
@@ -74,6 +79,7 @@ void KeyItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 void KeyItem::mousePressEvent(QGraphicsSceneMouseEvent* e) {
   QGraphicsItem::mousePressEvent(e);
   m_color = m_color.lighter(200);
+  emit Clicked(m_str);
   update();
 }
 
