@@ -10,6 +10,7 @@ class MainWidget : public QWidget {
 
  private:
   void SetUI();
+  void ReadKeyText();
   View* m_view;
   QGraphicsScene* m_scene;
 };

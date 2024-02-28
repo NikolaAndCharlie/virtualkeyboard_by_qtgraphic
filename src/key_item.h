@@ -6,7 +6,7 @@
 class QColor;
 class QPainterPath;
 class QPainter;
- class KeyItem : public QGraphicsItem {
+class KeyItem : public QGraphicsItem {
  public:
   explicit KeyItem(const int x, const int y, const QString& str);
   ~KeyItem();
@@ -20,7 +20,9 @@ class QPainter;
   void mousePressEvent(QGraphicsSceneMouseEvent* e) override;
   void mouseReleaseEvent(QGraphicsSceneMouseEvent* e) override;
   void mouseMoveEvent(QGraphicsSceneMouseEvent* e) override;
-
+  void hoverEnterEvent(QGraphicsSceneHoverEvent* e) override;
+  void hoverLeaveEvent(QGraphicsSceneHoverEvent* e) override;
+  
  private:
   int m_x;
   int m_y;

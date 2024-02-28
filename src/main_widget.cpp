@@ -2,7 +2,12 @@
 
 #include "key_item.h"
 #include "keyboard_view.h"
+#include "qcoreapplication.h"
+#include "qdir.h"
+#include "qfile.h"
+#include "qiodevice.h"
 #include "qlayout.h"
+#include "qtextstream.h"
 
 MainWidget::MainWidget() {
   SetUI();
@@ -14,12 +19,34 @@ MainWidget::~MainWidget() {}
 void MainWidget::SetUI() {
   m_view = new View("Main");
   m_scene = new QGraphicsScene(this);
-  KeyItem* item = new KeyItem(100, 100, "W");
-  item->setPos(0, 0);
-  m_scene->setSceneRect(QRect(0, 0, 1200, 700));
-  m_scene->addItem(item);
+  ReadKeyText();
+  m_scene->setSceneRect(QRect(0, 0, 800, 300));
   m_view->view()->setScene(m_scene);
   QHBoxLayout* layout = new QHBoxLayout();
   layout->addWidget(m_view);
   this->setLayout(layout);
+}
+
+void MainWidget::ReadKeyText() {
+  QString text_string =
+      QCoreApplication::applicationDirPath() + "/keyboard.txt";
+  text_string = QDir::toNativeSeparators(text_string);
+
+  QFile file(text_string);
+  if (!file.open(QIODevice::ReadOnly)) {
+    return;
+  }
+  QTextStream out(&file);
+  int row = 0;
+  while (!out.atEnd()) {
+    QString str = out.readLine();
+    QStringList key_list = str.split("&&");
+    for (int i = 0; i < key_list.size(); ++i) {
+      QString key_str = key_list.at(i);
+      KeyItem* item = new KeyItem(50 * i, row * 50, key_str);
+      item->setPos(50 * i + 25, row * 50 + 25);
+      m_scene->addItem(item);
+    }
+    row++;
+  }
 }

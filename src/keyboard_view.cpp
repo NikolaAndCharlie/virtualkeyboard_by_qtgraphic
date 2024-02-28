@@ -5,7 +5,6 @@
 #include "qlayout.h"
 
 void GraphicsView::wheelEvent(QWheelEvent* e) {
-  int a = 0;
 }
 
 

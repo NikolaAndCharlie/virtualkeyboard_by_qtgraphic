@@ -4,62 +4,68 @@
 #include "qpainter.h"
 #include "qpainterpath.h"
 #include "qstyleoption.h"
-
+static const int width = 50;
+static const int height = 50;
 KeyItem::KeyItem(const int x, const int y, const QString& str)
     : m_x(x), m_y(y), m_str(str) {
   this->setX(x);
   this->setY(y);
-  setFlags(ItemIsSelectable | ItemIsMovable);
+  m_color.setRgb(156, 229, 134);
+  setFlags(ItemIsSelectable);
   setAcceptHoverEvents(true);
 }
 
 KeyItem::~KeyItem() {}
 
-QRectF KeyItem::boundingRect() const { return QRectF(0, 0, 40, 40); }
+QRectF KeyItem::boundingRect() const {
+  QRectF rect(0, 0, width, height);
+  if (m_str == "Enter") {
+    rect.setHeight(height * 2);
+  }
+  return rect;
+}
 
 QPainterPath KeyItem::shape() const {
   QPainterPath path;
-  path.addRect(0, 0, 35, 35);
+  if (m_str == "Enter") {
+    path.addRect(0, 0, width - 10, height * 2 - 20);
+  } else {
+    path.addRect(0, 0, width - 10, height - 10);
+  }
   return path;
 }
 
 void KeyItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
                     QWidget* widget) {
-  QColor fill_color =
-      (option->state & QStyle::State_Selected) ? m_color.darker(150) : m_color;
-  if (option->state & QStyle::State_MouseOver) {
-    fill_color = m_color.lighter(150);
+  QColor fill_color = m_color;
+  if (m_str == "Enter") {
+    painter->fillRect(QRectF(0, 0, width - 5, height * 2 - 5), fill_color);
+  } else {
+    painter->fillRect(QRectF(0, 0, width - 5, height - 5), fill_color);
   }
-  painter->fillRect(QRectF(0, 0, 40, 40), fill_color);
+
   const qreal lod =
       option->levelOfDetailFromTransform(painter->worldTransform());
   if (lod < 0.2) {
     if (lod < 0.125) {
-      painter->fillRect(QRectF(0, 0, 40, 40), fill_color);
+      painter->fillRect(QRectF(0, 0, width, height), fill_color);
       return;
     }
     QBrush b = painter->brush();
     painter->setBrush(fill_color);
-    painter->drawRect(5, 5, 35, 35);
+    painter->drawRect(5, 5, width, height);
     painter->setBrush(b);
     return;
   }
 
-  // QPen old_pen = painter->pen();
-  // QPen pen = old_pen;
-  // int width = 0;
-  // if (option->state & QStyle::State_Selected) {
-  //   width += 2;
-  // }
-  // pen.setWidth(width);
-  // QBrush b = painter->brush();
-  // painter->setBrush(QBrush(
-  //     fill_color.darker(option->state & QStyle::State_Sunken ? 120 : 100)));
-  // painter->drawRect(10, 10, 60, 60);
-  // painter->setBrush(b);
   if (lod >= 1) {
+    QFontMetrics metrics(painter->font());
+    QRectF text_rect = metrics.boundingRect(m_str);
+    QPointF center = boundingRect().center();
+    QPointF text_pos(center.x() - text_rect.width() / 2,
+                     center.y() - text_rect.y() / 2);
     painter->setPen(QPen(Qt::gray, 1));
-    painter->drawText(15, 25, m_str);
+    painter->drawText(text_pos, m_str);
   }
   int x = this->x();
   int y = this->y();
@@ -67,15 +73,27 @@ void KeyItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 
 void KeyItem::mousePressEvent(QGraphicsSceneMouseEvent* e) {
   QGraphicsItem::mousePressEvent(e);
+  m_color = m_color.lighter(200);
   update();
 }
 
 void KeyItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* e) {
   QGraphicsItem::mouseReleaseEvent(e);
+  m_color = m_color.darker(200);
   update();
 }
 
 void KeyItem::mouseMoveEvent(QGraphicsSceneMouseEvent* e) {
   QGraphicsItem::mouseMoveEvent(e);
+  update();
+}
+
+void KeyItem::hoverEnterEvent(QGraphicsSceneHoverEvent* e) {
+  m_color.setRgb(156, 229, 200);
+  update();
+}
+
+void KeyItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* e) {
+  m_color.setRgb(156, 229, 134);
   update();
 }
