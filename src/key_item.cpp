@@ -76,6 +76,11 @@ void KeyItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
   int y = this->y();
 }
 
+void KeyItem::SetStr(const QString& str) {
+  m_str = str;
+  update();
+}
+
 void KeyItem::mousePressEvent(QGraphicsSceneMouseEvent* e) {
   QGraphicsItem::mousePressEvent(e);
   m_color = m_color.lighter(200);

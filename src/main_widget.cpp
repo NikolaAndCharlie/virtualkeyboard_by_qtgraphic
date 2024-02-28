@@ -9,7 +9,7 @@
 #include "qlayout.h"
 #include "qtextstream.h"
 
-MainWidget::MainWidget() {
+MainWidget::MainWidget() : m_cap_clicked(false) {
   SetUI();
   this->setFixedSize(1200, 700);
 }
@@ -55,5 +55,24 @@ void MainWidget::ReadKeyText() {
 
 void MainWidget::GetItemClickedString(const QString& str) {
   QString s = str;
-  int a = 0;
+  if (str == "Cap") {
+    m_cap_clicked = m_cap_clicked ? false: true;
+    QList<QGraphicsItem*> items = m_scene->items();
+    for (int i = 0; i < items.size(); ++i) {
+      QGraphicsItem* item = items.at(i);
+      KeyItem* key_item = static_cast<KeyItem*>(item);
+      QString key_item_str = key_item->GetStr();
+      if (key_item_str.size() == 1) {
+        QChar chr = key_item_str.at(0);
+        if (chr.isLetter()) {
+          if (m_cap_clicked) {
+            key_item_str = key_item_str.toUpper();
+          } else {
+            key_item_str = key_item_str.toLower();
+          }
+          key_item->SetStr(key_item_str);
+        }
+      }
+    }
+  }
 }

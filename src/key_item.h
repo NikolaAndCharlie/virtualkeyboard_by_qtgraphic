@@ -6,7 +6,7 @@
 class QColor;
 class QPainterPath;
 class QPainter;
-class KeyItem :public QObject, public QGraphicsItem {
+class KeyItem : public QObject, public QGraphicsItem {
   Q_OBJECT
  public:
   explicit KeyItem(const int x, const int y, const QString& str);
@@ -16,6 +16,8 @@ class KeyItem :public QObject, public QGraphicsItem {
   QPainterPath shape() const override;
   void paint(QPainter* painter, const QStyleOptionGraphicsItem* item,
              QWidget* widget) override;
+  QString GetStr() { return m_str; };
+  void SetStr(const QString& str);
 
  protected:
   void mousePressEvent(QGraphicsSceneMouseEvent* e) override;
