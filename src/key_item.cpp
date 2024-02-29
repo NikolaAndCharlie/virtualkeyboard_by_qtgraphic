@@ -7,7 +7,7 @@
 static const int width = 50;
 static const int height = 50;
 KeyItem::KeyItem(const int x, const int y, const QString& str)
-    : m_x(x), m_y(y), m_str(str) {
+    : m_x(x), m_y(y), m_str(str), m_scale(1.0) {
   this->setX(x);
   this->setY(y);
   m_color.setRgb(156, 229, 134);
@@ -39,7 +39,7 @@ void KeyItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
                     QWidget* widget) {
   QColor fill_color = m_color;
   if (option->state & QStyle::State_Selected) {
-  //  fill_color = m_color.lighter(150);
+    //  fill_color = m_color.lighter(150);
   } else if (option->state & QStyle::State_MouseOver) {
     fill_color = m_color.darker(150);
   }
@@ -81,6 +81,13 @@ void KeyItem::SetStr(const QString& str) {
   update();
 }
 
+void KeyItem::Zoom(const double scale) {
+  QTransform transform;
+  transform.scale(scale, scale);
+  this->setTransform(transform);
+  update();
+}
+
 void KeyItem::mousePressEvent(QGraphicsSceneMouseEvent* e) {
   QGraphicsItem::mousePressEvent(e);
   m_color = m_color.lighter(200);
@@ -106,5 +113,18 @@ void KeyItem::hoverEnterEvent(QGraphicsSceneHoverEvent* e) {
 
 void KeyItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* e) {
   m_color.setRgb(156, 229, 134);
+  update();
+}
+
+void KeyItem::wheelEvent(QGraphicsSceneWheelEvent* e) {
+  QTransform transform;
+  if (e->delta() > 0) {
+    m_scale += 0.1;
+  } else {
+    m_scale -= 0.1;
+  }
+  transform.scale(m_scale, m_scale);
+  this->setTransform(transform);
+  QGraphicsItem::wheelEvent(e);
   update();
 }

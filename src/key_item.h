@@ -18,13 +18,14 @@ class KeyItem : public QObject, public QGraphicsItem {
              QWidget* widget) override;
   QString GetStr() { return m_str; };
   void SetStr(const QString& str);
-
+  void Zoom(const double);
  protected:
   void mousePressEvent(QGraphicsSceneMouseEvent* e) override;
   void mouseReleaseEvent(QGraphicsSceneMouseEvent* e) override;
   void mouseMoveEvent(QGraphicsSceneMouseEvent* e) override;
   void hoverEnterEvent(QGraphicsSceneHoverEvent* e) override;
   void hoverLeaveEvent(QGraphicsSceneHoverEvent* e) override;
+  void wheelEvent(QGraphicsSceneWheelEvent*e) override;
  signals:
   void Clicked(const QString&);
 
@@ -33,4 +34,5 @@ class KeyItem : public QObject, public QGraphicsItem {
   int m_y;
   QColor m_color;
   QString m_str;
+  int m_scale;
 };
